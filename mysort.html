@@ -1,0 +1,281 @@
+
+<!DOCTYPE html>  
+<html>  
+<head>  
+<title>twobin 常见排序算法 （JS版） </title>  
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />  
+<link rel="stylesheet" type="text/css" href="css/test.less">
+</head>  
+<body>  
+<h2>随机生成乱序数组</h2>
+<textarea id='t_a_1'></textarea>
+<h2>排序数组</h2>
+<textarea id='t_a_2'></textarea>
+<button id='btn1'>Array.sort()</button>
+<button id='btn2'>冒泡</button>
+<button id='btn3'>选择排序</button>
+<button id='btn4'>插入排序</button>
+<button id='btn5'>希尔排序</button>
+<button id='btn6'>递归快速排序</button>
+<button id='btn7'>堆栈快速排序</button>
+<button id='btn8'>归并排序</button>
+<button id='btn9'>堆排序</button>
+<br>
+<button id='btn0'>清空</button>
+<button id='newBtn'>生成新的随机数组</button>
+<div id='result'>
+<p><span>排序方法</span><span>数组长度</span><span>时间（ms）</span></p>
+</div>
+</body> 
+<script>
+window.onload = function() {
+	var arr = [];
+	newArr();
+	function newArr() {
+		arr = []
+		for (var i = 0; i < 10000; i++) {
+			arr.push(Math.ceil(Math.random() * 1000));
+		}
+		getEl('t_a_1').innerText  = arr;
+	}
+
+	function getEl(id) {
+		return document.getElementById(id);
+	}
+
+
+	Array.prototype.swap = function(a, b) {
+		var temp = this[a];
+		this[a] = this[b];
+		this[b] = temp;
+	}
+
+	getEl('newBtn').onclick = newArr;
+	getEl('btn0').onclick = function() {
+		getEl('t_a_2').innerText = '';
+	}
+	getEl('btn1').onclick = function() {
+		var p = document.createElement('p');
+		getEl('result').appendChild(p)
+		p.innerHTML = '<span>'+this.innerText+'</span>';
+		p.innerHTML += '<span>'+arr.length+'</span>';
+		var start = Date.now();
+		getEl('t_a_2').innerText = arr.sort(function(a, b) {
+			return a - b;
+		});
+		p.innerHTML += '<span>'+(Date.now() - start)+'</span>'
+	}
+
+	getEl('btn2').onclick = function() {
+		var p = document.createElement('p');
+		getEl('result').appendChild(p)
+		var start = Date.now();
+		arr.bulbleSort();
+		var stop = Date.now();
+		getEl('t_a_2').innerText = arr;
+		p.innerHTML = '<span>'+this.innerText+'</span>';
+		p.innerHTML += '<span>'+arr.length+'</span>';
+		p.innerHTML += '<span>'+(stop - start)+'</span>'
+	}
+
+	getEl('btn3').onclick = function() {
+		var p = document.createElement('p');
+		getEl('result').appendChild(p)
+		var start = Date.now();
+		arr.selectionSort();
+		var stop = Date.now();
+		getEl('t_a_2').innerText = arr;
+		p.innerHTML = '<span>'+this.innerText+'</span>';
+		p.innerHTML += '<span>'+arr.length+'</span>';
+		p.innerHTML += '<span>'+(stop - start)+'</span>'
+	}
+
+	getEl('btn4').onclick = function() {
+		var p = document.createElement('p');
+		getEl('result').appendChild(p)
+		var start = Date.now();
+		arr.insertSort();
+		var stop = Date.now();
+		getEl('t_a_2').innerText = arr;
+		p.innerHTML = '<span>'+this.innerText+'</span>';
+		p.innerHTML += '<span>'+arr.length+'</span>';
+		p.innerHTML += '<span>'+(stop - start)+'</span>'
+	}
+
+	getEl('btn5').onclick = function() {
+		var p = document.createElement('p');
+		getEl('result').appendChild(p)
+		var start = Date.now();
+		arr.shellSort();
+		var stop = Date.now();
+		getEl('t_a_2').innerText = arr;
+		p.innerHTML = '<span>'+this.innerText+'</span>';
+		p.innerHTML += '<span>'+arr.length+'</span>';
+		p.innerHTML += '<span>'+(stop - start)+'</span>'
+	}
+
+	getEl('btn6').onclick = function() {
+		var p = document.createElement('p');
+		getEl('result').appendChild(p)
+		var start = Date.now();
+		arr.quickSort();
+		var stop = Date.now();
+		getEl('t_a_2').innerText = arr;
+		p.innerHTML = '<span>'+this.innerText+'</span>';
+		p.innerHTML += '<span>'+arr.length+'</span>';
+		p.innerHTML += '<span>'+(stop - start)+'</span>'
+	}
+
+	getEl('btn7').onclick = function() {
+		var p = document.createElement('p');
+		getEl('result').appendChild(p)
+		var start = Date.now();
+		arr.stackQuickSort();
+		var stop = Date.now();
+		getEl('t_a_2').innerText = arr;
+		p.innerHTML = '<span>'+this.innerText+'</span>';
+		p.innerHTML += '<span>'+arr.length+'</span>';
+		p.innerHTML += '<span>'+(stop - start)+'</span>'
+	}
+
+	getEl('btn8').onclick = function() {
+		var p = document.createElement('p');
+		getEl('result').appendChild(p)
+		var start = Date.now();
+		var newArr = mergeSort(arr);
+		var stop = Date.now();
+		getEl('t_a_2').innerText = newArr;
+		p.innerHTML = '<span>'+this.innerText+'</span>';
+		p.innerHTML += '<span>'+newArr.length+'</span>';
+		p.innerHTML += '<span>'+(stop - start)+'</span>'
+	}
+
+	// 冒泡的原理比较简单，相邻的两个值，进行比较，把较大的值一直换到数组的顶部或者底部，然后依次减少循环的范围，需要注意的是，这里边要用两层循环，而两层循环的方向必然是相反的，这样才能够保证把这一轮冒泡出来的值存储下来，并且不再次循环这个值；
+	Array.prototype.bulbleSort = function() {
+		for (var i = this.length - 1; i > 0; i--) {
+			for (var j = 0; j < i; j++) {
+				if (this[j] > this[j + 1]) {
+					this.swap(j, j + 1)
+				}
+			}
+		}
+	}
+
+	// 选择排序法就是选择出本轮最小的索引值，然后跟数组顶部或者底部的索引交换值，然后依次减少数组范围
+	Array.prototype.selectionSort = function() {
+		for (var i = 0; i < this.length; i++) {
+			var minIndex = i;
+			for (var j = i + 1; j < this.length; j++) {
+				if (this[j] < this[minIndex]) {
+					minIndex = j;
+				}
+			}
+			this.swap(i, minIndex);
+		}
+	}
+
+	// 插入排序跟选择排序最大的区别是，选择排序是选择完一轮中谁是最小的，然后交换，插入排序是，比较到半途中一旦遇到不符合条件的立马停止进行交换，因为一开始是从2开始的，所以从小到大已经有了一个顺序，所以插入算法优与选择排序,而且如果一个数组已经排序好了，这个方法基本上是不耗时间的
+	Array.prototype.insertSort = function() {
+		for (var i = 1; i < this.length; ++i) {
+			var j = i;
+			var value = this[i];
+			while(j > 0 && this[j - 1] > value) {
+				this[j] = this[j - 1];
+				--j;
+			}
+			this[j] = value;
+		}
+	}
+
+	//希尔排序(>>位运算) (在插入排序的基础上，尽量减少远距离的遍历，把远距离的遍历改为近距离的遍历)
+	Array.prototype.shellSort = function() {
+		for (var step = this.length >> 1; step > 0; step >>= 1) {
+			//alert(step >>= 1);
+			for (var i = 0; i < step; ++i) {
+				for (var j = i + step; j < this.length; j += step) {
+					var k = j,
+						value = this[j];
+					while (k >= step && this[k - step] > value) {
+						this[k] = this[k - step];
+						k -= step;
+					}
+					this[k] = value;
+				}
+			}
+		}
+	}
+	
+
+	//递归快速排序，首先快速排序是取数组中一个值为中心点，把比这个值小的都放在左边，比这个值大的都放在右边（等于这个值的根据算法有的在左边有的在右边），然后再在 左右两边 使用同样的方法再排序，一直到细分出来的左右两边越来越小，最终完成排序，递归就是调用自身方法的意思，使用循环调用自身函数的快速排序方法，即递归快速排序。
+	Array.prototype.quickSort = function(left, right) {
+		if (typeof left !== 'number') left = 0;
+		if (typeof right !== 'number') right = this.length - 1;
+		if (left >= right) return;
+		var pivot = left + Math.floor((right - left) / 2); // 找到暂时的中心点，暂时的中心点只是取这个位置的值，下方计算的目的就是为了求出来这个值真正在这个数组中应该放置的位置，即newPivot，newPivot的左边和右边就是下一层循环用的数组的部分，所以newPivot才是真正的中心点
+	    var pivotValue = this[pivot];
+	    var newPivot = left; // 暂时假设真正的中心点在最左边
+
+	    this.swap(pivot, right); // 把中心点的值放置到最右边，以便下方循环
+	    for(var i = left; i < right; i++) {
+	      if(this[i] < pivotValue) {
+	        this.swap(i, newPivot);  // 每找到一个比中心点值小的，就把这个值跟newPivot当前的值交换，然后newPivot+1，这样最后newPivot的位置的左边都是比该值小的，右边都是不小于这个值的，所以这个位置就是真正中心点的位置(该算法中等于中心点的值留在了中心点的右边)
+	        newPivot++;
+	      }
+	    }
+	    this.swap(right, newPivot); // 把暂时存放中心点的值放置到找到的真正的中心点的位置
+
+		this.quickSort(left, newPivot - 1);
+      	this.quickSort(newPivot + 1, right);
+  		// newPivot 如果放到left或者right中去，有可能造成两个相同的值一直在循环跳不出来
+  		// 理解这里有一点基础知识的需求：数组是在内存中存放的，我们在这里操作left，right，并没有真正的生成两个新的数组，而只是在这个数组的各个部分操作其本身.
+		// 可以用一个长度为10的数组尝试，在任何位置console.log(this)，可以发现一直是数组本身，并不是细分出来的数组		
+	}
+
+	Array.prototype.stackQuickSort = function() {
+		var stack = [0, this.length - 1];
+
+		while (stack.length > 0) {
+			var right = stack.pop(); // 容易忽略的关键点，后进先出，堆栈，所以第一个出来的是right
+			var left = stack.pop();
+			if (left >= right) continue;
+
+			var piovt = (right + left) >> 1;
+			var pivotValue = this[piovt];
+			var newPivot = left;
+
+			this.swap(right, piovt)
+			for (var i = left; i < right; i++) {
+				if (this[i] < pivotValue) 
+					this.swap(newPivot++, i)
+			}
+			this.swap(right, newPivot)
+			stack.push(left, newPivot - 1, newPivot + 1, right);
+		}
+	}
+
+	// 经典的归并算法，缺点是需要不断的生成新的数组，结合快速算法、插入算法中拆分的方法，可以优化成如上方在Array中操作index的方法
+	function mergeSort(items) {
+		if (items.length == 1) return items;
+		var middle = items.length >> 1;
+		var left = items.slice(0, middle);
+		var right = items.slice(middle);
+		return merge(mergeSort(left), mergeSort(right));
+	}
+	function merge(left, right) {
+		var result = [];
+		while (left.length > 0 && right.length > 0) {
+			if (left[0] < right[0]) {
+				result.push(left.shift());
+			} else {
+				result.push(right.shift());			
+			}
+		}
+		return result.concat(left, right);
+	}
+
+
+
+}
+</script>
+
+</html> 

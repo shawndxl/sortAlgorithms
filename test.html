@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title></title>
+</head>
+<body></body>
+<script>
+var arr = newArr();
+function newArr() {
+	var arr = []
+	for (var i = 0; i < 20; i++) {
+		arr.push(Math.ceil(Math.random() * 20));
+	}
+	return arr;
+}
+
+Array.prototype.swap = function(a, b) {
+	var temp = this[a];
+	this[a] = this[b];
+	this[b] = temp;
+}
+
+
+//归并排序
+Array.prototype.mergeSort = function(left, right, result) {
+	if (left == null) left = 0;
+	if (right == null) right = this.length - 1;
+	if (result == null) 
+		result = new Array(this.length);
+	if (left >= right) return;
+
+	var middle = (left + right) >> 1;
+	this.mergeSort(left, middle, result);
+	this.mergeSort(middle + 1, right, result);
+
+	var j = left;
+	var k = middle + 1;
+	for (var i = left;i <= right; i++) {
+		if (k > right || j <= middle && this[j] < this[k]) {
+			result[i] = this[j++]
+		} else {
+			result[i] = this[k++]			
+		}
+	}
+
+	for (var i = left; i <= right; i++) {
+		this[i] = result[i];
+	}
+}
+
+
+
+arr.mergeSort();
+console.log(arr)
+</script>
+</html>
